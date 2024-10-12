@@ -92,3 +92,41 @@ test('admin can update any user', async () => {
     expect(updateRes.status).toBe(200);
     expect(updateRes.body.email).toBe('updatedemail@test.com');
 });
+
+test('logout should succeed', async () => {
+    const logoutRes = await request(app)
+      .delete('/api/auth')
+      .set('Authorization', `Bearer ${testUserAuthToken}`);
+  
+    expect(logoutRes.status).toBe(200);
+    expect(logoutRes.body.message).toBe('logout successful');
+});
+  
+test('logout should prevent further actions with the same token', async () => {
+    const logoutRes = await request(app)
+      .delete('/api/auth')
+      .set('Authorization', `Bearer ${testUserAuthToken}`);
+    expect(logoutRes.status).toBe(200);
+  
+    const protectedRes = await request(app)
+      .put(`/api/auth/${testUser.id}`)
+      .send({ email: 'updatedemail@test.com', password: 'newpass' })
+      .set('Authorization', `Bearer ${testUserAuthToken}`);
+    expect(protectedRes.status).toBe(401);
+    expect(protectedRes.body.message).toBe('unauthorized');
+});
+
+test('should return unauthorized if no token is provided', async () => {
+    const res = await request(app).delete('/api/auth');
+    expect(res.status).toBe(401);
+    expect(res.body.message).toBe('unauthorized');
+});
+
+test('should fail with malformed token', async () => {
+    const res = await request(app)
+      .delete('/api/auth')
+      .set('Authorization', 'Bearer invalidtoken');
+    
+    expect(res.status).toBe(401);
+    expect(res.body.message).toBe('unauthorized');
+});
