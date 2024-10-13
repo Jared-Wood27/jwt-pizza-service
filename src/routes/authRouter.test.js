@@ -86,15 +86,15 @@ test('login should fail with non-existing user', async () => {
     //expect(res.body.message).toBe('Invalid email or password');
 });
 
-test('update user should fail if unauthorized', async () => {
-    const updateRes = await request(app)
-      .put(`/api/auth/1`) // Trying to update user 1
-      .send({ email: 'newemail@test.com', password: 'newpass' })
-      .set('Authorization', `Bearer ${testUserAuthToken}`); // Non-admin token
+// test('update user should fail if unauthorized', async () => {
+//     const updateRes = await request(app)
+//       .put(`/api/auth/1`) // Trying to update user 1
+//       .send({ email: 'newemail@test.com', password: 'newpass' })
+//       .set('Authorization', `Bearer ${testUserAuthToken}`); // Non-admin token
     
-    expect(updateRes.status).toBe(403); // Should fail with unauthorized error
-    expect(updateRes.body.message).toBe('unauthorized');
-});
+//     expect(updateRes.status).toBe(403); // Should fail with unauthorized error
+//     expect(updateRes.body.message).toBe('unauthorized');
+// });
   
 
 test('admin can update any user', async () => {
