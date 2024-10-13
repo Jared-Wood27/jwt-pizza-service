@@ -17,7 +17,7 @@ beforeAll(async () => {
   expectValidJwt(testUserAuthToken);
 });
 
-test('login', async () => {
+test('login should succeed with valid credentials', async () => {
   const loginRes = await request(app).put('/api/auth').send(testUser);
   expect(loginRes.status).toBe(200);
   expectValidJwt(loginRes.body.token);
@@ -27,11 +27,25 @@ test('login', async () => {
   expect(loginRes.body.user).toMatchObject(expectedUser);
 });
 
+// // Test invalid JWT token handling (catch block)
+// test('should trigger catch block and set req.user to null when an error is thrown', async () => {
+//   // Invalid JWT format but correct structure
+//   const invalidJwt = 4;
+  
+//   const res = await request(app)
+//     .put('/api/auth')
+//     .set('Authorization', `Bearer ${invalidJwt}`); // Invalid JWT token
+
+//   expect(res.status).toBe(404); // Assuming 404 for failure
+//   expect(res.body.message).toBe('unauthorized');
+// });
+
 function expectValidJwt(potentialJwt) {
   expect(potentialJwt).toMatch(/^[a-zA-Z0-9\-_]*\.[a-zA-Z0-9\-_]*\.[a-zA-Z0-9\-_]*$/);
 }
 
 const { Role, DB } = require('../database/database.js');
+//const { setAuthUser } = require('./authRouter.js');
 //const { jwtSecret } = require('../config.js');
 
 async function createAdminUser() {
@@ -82,22 +96,6 @@ test('update user should fail if unauthorized', async () => {
     expect(updateRes.body.message).toBe('unauthorized');
 });
   
-// test('admin can update any user', async () => {
-//     const admin = await createAdminUser();
-//     const loginRes = await request(app).put('/api/auth').send(admin);
-//     const adminToken = loginRes.body.token;
-    
-//     const updateRes = await request(app)
-//       .put(`/api/auth/${testUser.id}`)
-//       .send({ email: 'updatedemail@test.com', password: 'newpass' })
-//       .set('Authorization', `Bearer ${adminToken}`);
-  
-//     //expect(updateRes.status).toBe(200);
-//     //expect(updateRes.body.email).toBe('updatedemail@test.com');
-
-//     //confused by this test so for now I will make it expect to break essentially... to be fixed in future
-//     expect(updateRes.status).toBe(500);
-// });
 
 test('admin can update any user', async () => {
   const admin = await createAdminUser();
@@ -121,20 +119,7 @@ test('logout should succeed', async () => {
     expect(logoutRes.status).toBe(200);
     expect(logoutRes.body.message).toBe('logout successful');
 });
-  
-// test('logout should prevent further actions with the same token', async () => {
-//     const logoutRes = await request(app)
-//       .delete('/api/auth')
-//       .set('Authorization', `Bearer ${testUserAuthToken}`);
-//     expect(logoutRes.status).toBe(200);
-  
-//     const protectedRes = await request(app)
-//       .put(`/api/auth/${testUser.id}`)
-//       .send({ email: 'updatedemail@test.com', password: 'newpass' })
-//       .set('Authorization', `Bearer ${testUserAuthToken}`);
-//     expect(protectedRes.status).toBe(401);
-//     expect(protectedRes.body.message).toBe('unauthorized');
-// });
+
 
 test('should return unauthorized if no token is provided', async () => {
     const res = await request(app).delete('/api/auth');
