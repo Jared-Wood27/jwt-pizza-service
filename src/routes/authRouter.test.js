@@ -1,7 +1,7 @@
 const request = require('supertest');
 const app = require('../service');
 
-const testUpdateUser = { name: 'pizza diner', id: 27, email: 'reg@test.com', password: 'a' };
+//const testUpdateUser = { name: 'pizza diner', id: 27, email: 'reg@test.com', password: 'a' };
 const testUser = { name: 'pizza diner', email: 'reg@test.com', password: 'a' };
 let testUserAuthToken;
 
