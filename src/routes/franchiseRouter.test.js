@@ -17,15 +17,6 @@ async function createAdminUser() {
   return { ...user, password: 'toomanysecrets' };
 }
 
-// // Helper function to create an admin user
-// async function createAdminUser() {
-//   let user = { password: 'adminpass', roles: [{ role: Role.Admin }] };
-//   user.name = 'adminUser';
-//   user.email = 'admin@test.com';
-//   user = await DB.addUser(user);
-//   return { ...user, password: 'adminpass' };
-// }
-
 // Helper function to create a regular user
 async function createRegularUser() {
   let user = { password: 'userpass', roles: [{ role: Role.Diner }] };
