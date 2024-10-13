@@ -82,21 +82,35 @@ test('update user should fail if unauthorized', async () => {
     expect(updateRes.body.message).toBe('unauthorized');
 });
   
-test('admin can update any user', async () => {
-    const admin = await createAdminUser();
-    const loginRes = await request(app).put('/api/auth').send(admin);
-    const adminToken = loginRes.body.token;
+// test('admin can update any user', async () => {
+//     const admin = await createAdminUser();
+//     const loginRes = await request(app).put('/api/auth').send(admin);
+//     const adminToken = loginRes.body.token;
     
-    const updateRes = await request(app)
-      .put(`/api/auth/${testUser.id}`)
-      .send({ email: 'updatedemail@test.com', password: 'newpass' })
-      .set('Authorization', `Bearer ${adminToken}`);
+//     const updateRes = await request(app)
+//       .put(`/api/auth/${testUser.id}`)
+//       .send({ email: 'updatedemail@test.com', password: 'newpass' })
+//       .set('Authorization', `Bearer ${adminToken}`);
   
-    //expect(updateRes.status).toBe(200);
-    //expect(updateRes.body.email).toBe('updatedemail@test.com');
+//     //expect(updateRes.status).toBe(200);
+//     //expect(updateRes.body.email).toBe('updatedemail@test.com');
 
-    //confused by this test so for now I will make it expect to break essentially... to be fixed in future
-    expect(updateRes.status).toBe(500);
+//     //confused by this test so for now I will make it expect to break essentially... to be fixed in future
+//     expect(updateRes.status).toBe(500);
+// });
+
+test('admin can update any user', async () => {
+  const admin = await createAdminUser();
+  const loginRes = await request(app).put('/api/auth').send(admin);
+  const adminToken = loginRes.body.token;
+  
+  const updateRes = await request(app)
+    .put(`/api/auth/1`)
+    .send({ email: 'updatedemail@test.com', password: 'newpass' })
+    .set('Authorization', `Bearer ${adminToken}`);
+
+  expect(updateRes.status).toBe(200);
+  expect(updateRes.body.email).toBe('updatedemail@test.com');
 });
 
 test('logout should succeed', async () => {
