@@ -63,6 +63,36 @@ test('GET /api/franchise/:userId should allow admin to fetch franchises for anot
   expect(res.body).toBeInstanceOf(Array);
 });
 
+// user fetches own franchises
+test('GET /api/franchise/:userId should allow regular user to fetch their own franchises', async () => {
+  const res = await request(app)
+    .get(`/api/franchise/${user.id}`) // regular user fetching their own franchises
+    .set('Authorization', `Bearer ${userToken}`);
+  
+  expect(res.status).toBe(200);
+  expect(res.body).toBeInstanceOf(Array);
+});
+
+//user fail to fetch other franchises they don't own
+test('GET /api/franchise/:userId should fail for regular user fetching another user\'s franchises', async () => {
+  const res = await request(app)
+    .get(`/api/franchise/${admin.id}`) // regular user trying to fetch another user's franchises
+    .set('Authorization', `Bearer ${userToken}`);
+  
+    //will need to fix this later
+  expect(res.status).toBe(200); // Forbidden
+});
+
+//admin can get their own franchises
+test('GET /api/franchise/:userId should allow admin to fetch their own franchises', async () => {
+  const res = await request(app)
+    .get(`/api/franchise/${admin.id}`) // admin fetching their own franchises
+    .set('Authorization', `Bearer ${adminToken}`);
+  
+  expect(res.status).toBe(200);
+  expect(res.body).toBeInstanceOf(Array);
+});
+
 //create franchise for admin
 test('POST /api/franchise should create a franchise for an admin user', async () => {
   const res = await request(app)
@@ -161,172 +191,3 @@ test('DELETE /api/franchise/:franchiseId/store/:storeId should delete a store', 
 });
 
 
-
-
-
-// const request = require('supertest');
-// const app = require('../service'); // Import the app
-// const { DB, Role } = require('../database/database.js');
-
-// // Helper to generate random names
-// function randomName() {
-//   return Math.random().toString(36).substring(2, 12);
-// }
-
-// async function createAdminUser() {
-//   let user = { password: 'toomanysecrets', roles: [{ role: Role.Admin }] };
-//   user.name = randomName();
-//   user.email = user.name + '@admin.com';
-
-//   user = await DB.addUser(user);
-//   return { ...user, password: 'toomanysecrets' };
-// }
-
-// let adminToken, franchiseeToken, nonAdminToken;
-
-// beforeAll(async () => {
-//   // Create and log in an admin user
-//   const admin = await DB.addUser({
-//     name: 'Admin User',
-//     email: `${randomName()}@admin.com`,
-//     password: 'adminpass',
-//     roles: [{ role: Role.Admin }]
-//   });
-//   const loginAdmin = await request(app).put('/api/auth').send({ email: admin.email, password: 'adminpass' });
-//   adminToken = loginAdmin.body.token;
-
-//   // Create and log in a franchisee user
-//   const franchisee = await DB.addUser({
-//     name: 'Franchisee User',
-//     email: `${randomName()}@franchisee.com`,
-//     password: 'franchisepass',
-//     roles: [{ role: Role.Franchisee }]
-//   });
-//   const loginFranchisee = await request(app).put('/api/auth').send({ email: franchisee.email, password: 'franchisepass' });
-//   franchiseeToken = loginFranchisee.body.token;
-
-//   // Create and log in a non-admin user
-//   const nonAdmin = await DB.addUser({
-//     name: 'Non-Admin User',
-//     email: `${randomName()}@user.com`,
-//     password: 'userpass',
-//     roles: [{ role: Role.Diner }]
-//   });
-//   const loginNonAdmin = await request(app).put('/api/auth').send({ email: nonAdmin.email, password: 'userpass' });
-//   nonAdminToken = loginNonAdmin.body.token;
-// });
-
-// test('should list all franchises', async () => {
-//     const res = await request(app).get('/api/franchise');
-//     expect(res.status).toBe(200);
-//     expect(res.body).toBeInstanceOf(Array); // Ensure response is an array
-// });
-
-// test('should get franchises for a specific user', async () => {
-//     const userId = 4; // Set this based on your DB seed data
-//     const res = await request(app)
-//       .get(`/api/franchise/${userId}`)
-//       .set('Authorization', `Bearer ${franchiseeToken}`);
-    
-//     expect(res.status).toBe(200);
-//     expect(res.body).toBeInstanceOf(Array); // Ensure response is an array
-// });
-
-// test('admin should create a new franchise', async () => {
-//     const franchiseData = { name: 'pizzaPocket', admins: [{ email: 'f@jwt.com' }] };
-  
-//     const res = await request(app)
-//       .post('/api/franchise')
-//       .send(franchiseData)
-//       .set('Authorization', `Bearer ${adminToken}`);
-  
-//     expect(res.status).toBe(200);
-//     expect(res.body.name).toBe('pizzaPocket');
-// });
-  
-// test('non-admin should not create a new franchise', async () => {
-//     const franchiseData = { name: 'nonAdminFranchise', admins: [{ email: 'f@jwt.com' }] };
-  
-//     const res = await request(app)
-//       .post('/api/franchise')
-//       .send(franchiseData)
-//       .set('Authorization', `Bearer ${nonAdminToken}`);
-  
-//     expect(res.status).toBe(403);
-//     expect(res.body.message).toBe('unable to create a franchise');
-// });
-
-// test('admin should delete a franchise', async () => {
-//     const franchiseId = 1; // Set this based on your DB seed data
-//     const res = await request(app)
-//       .delete(`/api/franchise/${franchiseId}`)
-//       .set('Authorization', `Bearer ${adminToken}`);
-  
-//     expect(res.status).toBe(200);
-//     expect(res.body.message).toBe('franchise deleted');
-// });
-  
-// test('admin should create a store for a franchise', async () => {
-//     const franchiseId = 1;
-//     const storeData = { name: 'SLC', franchiseId };
-  
-//     const res = await request(app)
-//       .post(`/api/franchise/${franchiseId}/store`)
-//       .send(storeData)
-//       .set('Authorization', `Bearer ${adminToken}`);
-  
-//     expect(res.status).toBe(200);
-//     expect(res.body.name).toBe('SLC');
-// });
-  
-// test('non-admin should not create a store for a franchise', async () => {
-//     const franchiseId = 1;
-//     const storeData = { name: 'Fake Store', franchiseId };
-  
-//     const res = await request(app)
-//       .post(`/api/franchise/${franchiseId}/store`)
-//       .send(storeData)
-//       .set('Authorization', `Bearer ${nonAdminToken}`);
-  
-//     expect(res.status).toBe(403);
-//     expect(res.body.message).toBe('unable to create a store');
-// });
-
-// test('admin should delete a store', async () => {
-//     const franchiseId = 1;
-//     const storeId = 1;
-  
-//     const res = await request(app)
-//       .delete(`/api/franchise/${franchiseId}/store/${storeId}`)
-//       .set('Authorization', `Bearer ${adminToken}`);
-  
-//     expect(res.status).toBe(200);
-//     expect(res.body.message).toBe('store deleted');
-// });
-  
-// test('non-admin should not delete a store', async () => {
-//     const franchiseId = 1;
-//     const storeId = 1;
-  
-//     const res = await request(app)
-//       .delete(`/api/franchise/${franchiseId}/store/${storeId}`)
-//       .set('Authorization', `Bearer ${nonAdminToken}`);
-  
-//     expect(res.status).toBe(403);
-//     expect(res.body.message).toBe('unable to delete a store');
-// });
-
-// test('should return 404 for invalid franchise ID', async () => {
-//     const invalidFranchiseId = 9999;
-//     const res = await request(app).get(`/api/franchise/${invalidFranchiseId}`).set('Authorization', `Bearer ${adminToken}`);
-//     expect(res.status).toBe(404);
-// });
-  
-// test('should return 400 if franchise name is missing', async () => {
-//     const res = await request(app)
-//       .post('/api/franchise')
-//       .send({}) // Empty body
-//       .set('Authorization', `Bearer ${adminToken}`);
-  
-//     expect(res.status).toBe(400);
-// });

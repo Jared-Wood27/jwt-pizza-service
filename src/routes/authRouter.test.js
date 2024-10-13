@@ -32,6 +32,7 @@ function expectValidJwt(potentialJwt) {
 }
 
 const { Role, DB } = require('../database/database.js');
+const { jwtSecret } = require('../config.js');
 
 async function createAdminUser() {
   let user = { password: 'toomanysecrets', roles: [{ role: Role.Admin }] };
