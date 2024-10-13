@@ -57,7 +57,8 @@ test('register should fail if email is missing', async () => {
     expect(res.body.message).toBe('name, email, and password are required');
 });
 
-test('login should fail with incorrect password', async () => {
+
+test('login should fail with incorrect password', async () => { 
     const res = await request(app).put('/api/auth').send({ email: testUser.email, password: 'wrongpass' });
     expect(res.status).toBe(401); // Assuming 401 Unauthorized
     expect(res.body.message).toBe('Invalid email or password');

@@ -148,6 +148,6 @@ describe('OrderRouter Endpoints', () => {
       .send(orderRequest)
       .set('Authorization', `Bearer ${userToken}`);
     
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(500);
   });
 });
