@@ -78,9 +78,10 @@ test('POST /api/order - should create an order successfully', async () => {
     franchiseId: 1,
     storeId: 1,
     items: [{ menuId: 1, description: 'Veggie', price: 0.05 }]
-};
+  };
+//});
 
-//test adding a franchise user
+// //test adding a franchise user
 // test('add franchise user', async () => {
 //   const franchiseUser = await DB.addUser({
 //     name: 'John Doe',
@@ -88,7 +89,7 @@ test('POST /api/order - should create an order successfully', async () => {
 //     password: 'password123',
 //     roles: [{ role: Role.Franchisee, object: 1 }]
 //   });
-// }
+// })
 
 // const admin = await DB.addUser({
 //   name: 'Admin User',
@@ -101,7 +102,7 @@ test('POST /api/order - should create an order successfully', async () => {
 
   const factoryResponse = { jwt: '1111111111', reportUrl: 'http://report.com' };
   
-  // Mock external fetch call
+  //Mock external fetch call
   global.fetch = jest.fn(() => Promise.resolve({
     ok: true,
     json: () => Promise.resolve(factoryResponse)
@@ -123,9 +124,10 @@ test('POST /api/order - should handle factory API failure', async () => {
     franchiseId: 1,
     storeId: 1,
     items: [{ menuId: 1, description: 'Veggie', price: 0.05 }]
-};
+  };
 
-  // Mock factory failure response
+
+  //Mock factory failure response
   global.fetch = jest.fn(() => Promise.resolve({
     ok: false,
     json: () => Promise.resolve({ reportUrl: 'http://errorreport.com' })
@@ -147,6 +149,7 @@ test('POST /api/order - should return 500 for missing franchiseId', async () => 
     storeId: 1,
     items: [{ menuId: 1, description: 'Veggie', price: 0.05 }]
   };
+
   
   const res = await request(app)
     .post('/api/order')
