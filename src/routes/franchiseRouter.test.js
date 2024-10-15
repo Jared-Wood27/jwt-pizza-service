@@ -60,10 +60,6 @@ beforeAll(async () => {
   franchiseUser = await createFranchiseUser(); // Create a franchise user
   //const franchiseRes = await request(app).put('/api/auth').send(franchiseUser);
   //franchiseToken = franchiseRes.body.token;
-
-  // franchiseUser = await createFranchiseUser();
-  // const franchiseRes = await request(app).put('/api/auth').send(franciseUser);
-  // franchiseToken = franchiseRes.body.token;
 });
 
 test('GET /api/franchise should list all franchises', async () => {

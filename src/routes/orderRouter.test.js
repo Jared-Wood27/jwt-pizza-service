@@ -79,26 +79,6 @@ test('POST /api/order - should create an order successfully', async () => {
     storeId: 1,
     items: [{ menuId: 1, description: 'Veggie', price: 0.05 }]
   };
-//});
-
-// //test adding a franchise user
-// test('add franchise user', async () => {
-//   const franchiseUser = await DB.addUser({
-//     name: 'John Doe',
-//     email: 'john@example.com',
-//     password: 'password123',
-//     roles: [{ role: Role.Franchisee, object: 1 }]
-//   });
-// })
-
-// const admin = await DB.addUser({
-//   name: 'Admin User',
-//   email: 'admin@example.com',
-//   password: 'adminpass',
-//   roles: [{ role: Role.Admin }]
-// });
-// const loginAdmin = await request(app).put('/api/auth').send({ email: admin.email, password: 'adminpass' });
-// adminToken = loginAdmin.body.token;
 
   const factoryResponse = { jwt: '1111111111', reportUrl: 'http://report.com' };
   
