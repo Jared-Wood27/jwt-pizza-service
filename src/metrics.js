@@ -82,14 +82,18 @@ class Metrics {
   reportMetricsRepeatedly() {
     // This will periodically sent metrics to Grafana
     const timer = setInterval(() => {
-      this.sendMetricToGrafana('request', 'all', 'allRequests', this.totalRequests);
-      this.sendMetricToGrafana('request', 'GET', 'allGets', this.getRequests);
-      this.sendMetricToGrafana('request', 'POST', 'allPosts', this.postRequests);
-      this.sendMetricToGrafana('request', 'DELETE', 'allDeletes', this.deleteRequests);
-      this.sendMetricToGrafana('request', 'PUT', 'allPuts', this.putRequests);
-
+      try {
+        this.sendMetricToGrafana('request', 'all', 'allRequests', this.totalRequests);
+        this.sendMetricToGrafana('request', 'GET', 'allGets', this.getRequests);
+        this.sendMetricToGrafana('request', 'POST', 'allPosts', this.postRequests);
+        this.sendMetricToGrafana('request', 'DELETE', 'allDeletes', this.deleteRequests);
+        this.sendMetricToGrafana('request', 'PUT', 'allPuts', this.putRequests);
+      } catch (error) {
+        console/log('Error sending metrics', error);
+      }
     }, 10000); //report every 10 seconds
     timer.unref();
+  }
     // Report HTTP request-related metrics
     //this.sendMetricToGrafana('request', 'all', 'allRequests', this.totalRequests);
     //this.sendMetricToGrafana('request', 'GET', 'allGets', this.getRequests);
@@ -116,7 +120,7 @@ class Metrics {
     // Report system-related metrics (CPU and memory usage)
     //this.sendMetricToGrafana('system', 'cpu', 'usage', this.getCpuUsagePercentage());
     //this.sendMetricToGrafana('system', 'memory', 'usage', this.getMemoryUsagePercentage());
-  }
+  //}
 
   sendMetricToGrafana(metricPrefix, httpMethod, metricName, metricValue) {
     const metric = `${metricPrefix},source=${config.metrics.source},method=${httpMethod} ${metricName}=${metricValue}`;
