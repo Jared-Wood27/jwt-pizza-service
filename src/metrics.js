@@ -94,32 +94,32 @@ class Metrics {
 
     // Report user-related metrics (e.g., active users) 
     //sendMetricToGrafana(metricPrefix, httpMethod, metricName, metricValue)
-    this.sendMetricToGrafana('user', 'actions', 'activeUsers', this.activeUsers);
+    //this.sendMetricToGrafana('user', 'actions', 'activeUsers', this.activeUsers);
 
     // Report auth-related metrics
-    this.sendMetricToGrafana('auth', 'requests', 'goodAuths', this.goodAuthRequests);
-    this.sendMetricToGrafana('auth', 'requests', 'badAuths', this.badAuthRequests);
+    //this.sendMetricToGrafana('auth', 'requests', 'goodAuths', this.goodAuthRequests);
+    //this.sendMetricToGrafana('auth', 'requests', 'badAuths', this.badAuthRequests);
     
     // Report pizza-related metrics
-    this.sendMetricToGrafana('purchase', 'requests', 'pizzasSoldCount', this.pizzasSold);
-    this.sendMetricToGrafana('purchase', 'requests', 'failedPizzasCount', this.failedPizzas);
-    this.sendMetricToGrafana('purchase', 'requests', 'totalRevenue', this.pizzaRevenue);
+    //this.sendMetricToGrafana('purchase', 'requests', 'pizzasSoldCount', this.pizzasSold);
+    //this.sendMetricToGrafana('purchase', 'requests', 'failedPizzasCount', this.failedPizzas);
+    //this.sendMetricToGrafana('purchase', 'requests', 'totalRevenue', this.pizzaRevenue);
 
     //report general latency
-    this.sendMetricToGrafana('latency', 'requests', 'responseTime', this.responseTime);
+    //this.sendMetricToGrafana('latency', 'requests', 'responseTime', this.responseTime);
 
     // Report system-related metrics (CPU and memory usage)
-    this.sendMetricToGrafana('system', 'cpu', 'usage', this.getCpuUsagePercentage());
-    this.sendMetricToGrafana('system', 'memory', 'usage', this.getMemoryUsagePercentage());
+    //this.sendMetricToGrafana('system', 'cpu', 'usage', this.getCpuUsagePercentage());
+    //this.sendMetricToGrafana('system', 'memory', 'usage', this.getMemoryUsagePercentage());
   }
 
   sendMetricToGrafana(metricPrefix, httpMethod, metricName, metricValue) {
-    const metric = `${metricPrefix},source=${config.source},method=${httpMethod} ${metricName}=${metricValue}`;
+    const metric = `${metricPrefix},source=${config.metrics.source},method=${httpMethod} ${metricName}=${metricValue}`;
 
-    fetch(`${config.url}`, {
+    fetch(`${config.metrics.url}`, {
       method: 'post',
       body: metric,
-      headers: { Authorization: `Bearer ${config.userId}:${config.apiKey}` },
+      headers: { Authorization: `Bearer ${config.metrics.userId}:${config.metrics.apiKey}` },
     })
       .then((response) => {
         if (!response.ok) {
