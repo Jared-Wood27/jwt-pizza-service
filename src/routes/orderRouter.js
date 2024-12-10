@@ -3,6 +3,7 @@ const config = require('../config.js');
 const { Role, DB } = require('../database/database.js');
 const { authRouter } = require('./authRouter.js');
 const { asyncHandler, StatusCodeError } = require('../endpointHelper.js');
+const metrics = require('../metrics');
 
 const orderRouter = express.Router();
 
@@ -96,7 +97,7 @@ orderRouter.post(
     const endTime = Date.now();
     metrics.getLatency(startTime,endTime);
     if (r.ok) {
-      const totalPrice = 0;
+      let totalPrice = 0.00;
       for (let i = 0; i < order.items.length; i++) {
         metrics.incrementPizzasSold();
         totalPrice += order[i].price;  // Add the price of the current item to the total
