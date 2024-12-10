@@ -16,11 +16,6 @@ class Metrics {
     this.pizzaRevenue = 0;
     this.responseTime = 0;
 
-    // This will periodically sent metrics to Grafana
-    const timer = setInterval(() => {
-      this.reportMetrics();
-    }, 10000); //report every 10 seconds
-    timer.unref();
   }
 
 
@@ -84,13 +79,23 @@ class Metrics {
   }
 
   // Periodically report all metrics to Grafana
-  reportMetrics() {
+  reportMetricsRepeatedly() {
+    // This will periodically sent metrics to Grafana
+    const timer = setInterval(() => {
+      this.sendMetricToGrafana('request', 'all', 'allRequests', this.totalRequests);
+      this.sendMetricToGrafana('request', 'GET', 'allGets', this.getRequests);
+      this.sendMetricToGrafana('request', 'POST', 'allPosts', this.postRequests);
+      this.sendMetricToGrafana('request', 'DELETE', 'allDeletes', this.deleteRequests);
+      this.sendMetricToGrafana('request', 'PUT', 'allPuts', this.putRequests);
+
+    }, 10000); //report every 10 seconds
+    timer.unref();
     // Report HTTP request-related metrics
-    this.sendMetricToGrafana('request', 'all', 'allRequests', this.totalRequests);
-    this.sendMetricToGrafana('request', 'GET', 'allGets', this.getRequests);
-    this.sendMetricToGrafana('request', 'POST', 'allPosts', this.postRequests);
-    this.sendMetricToGrafana('request', 'DELETE', 'allDeletes', this.deleteRequests);
-    this.sendMetricToGrafana('request', 'PUT', 'allPuts', this.putRequests);
+    //this.sendMetricToGrafana('request', 'all', 'allRequests', this.totalRequests);
+    //this.sendMetricToGrafana('request', 'GET', 'allGets', this.getRequests);
+    //this.sendMetricToGrafana('request', 'POST', 'allPosts', this.postRequests);
+    //this.sendMetricToGrafana('request', 'DELETE', 'allDeletes', this.deleteRequests);
+    //this.sendMetricToGrafana('request', 'PUT', 'allPuts', this.putRequests);
 
     // Report user-related metrics (e.g., active users) 
     //sendMetricToGrafana(metricPrefix, httpMethod, metricName, metricValue)
