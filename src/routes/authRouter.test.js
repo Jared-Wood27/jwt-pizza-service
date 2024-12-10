@@ -21,6 +21,8 @@ test('login should succeed with valid credentials', async () => {
   const loginRes = await request(app).put('/api/auth').send(testUser);
   expect(loginRes.status).toBe(200);
   expectValidJwt(loginRes.body.token);
+  //new line for metrics tracking
+  //metrics.incrementAuthRequests();
 
   const expectedUser = { ...testUser, roles: [{ role: 'diner' }] };
   delete expectedUser.password;

@@ -4,6 +4,7 @@ const orderRouter = require('./routes/orderRouter.js');
 const franchiseRouter = require('./routes/franchiseRouter.js');
 const version = require('./version.json');
 const config = require('./config.js');
+const metrics = require('./metrics');
 
 const app = express();
 app.use(express.json());
@@ -21,6 +22,12 @@ app.use('/api', apiRouter);
 apiRouter.use('/auth', authRouter);
 apiRouter.use('/order', orderRouter);
 apiRouter.use('/franchise', franchiseRouter);
+app.use(metrics.requestTracker);
+//app.use(metrics.requestTracker.bind(metrics)); try this if test issues
+//idea use middleware to handle any and all requests
+//one piece of advice - D8 and D9 - make logging of factory requests very well done, check for success and failure and everything
+//related, if done well D11 
+
 
 apiRouter.use('/docs', (req, res) => {
   res.json({

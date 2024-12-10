@@ -72,12 +72,20 @@ orderRouter.get(
   })
 );
 
+//example: `curl -X POST localhost:3000/api/order -H 'Content-Type: application/json' -d 
+//'{"franchiseId": 1, "storeId":1, "items":[{ "menuId": 1, "description": "Veggie", "price": 0.05 }]}'  
+//-H 'Authorization: Bearer tttttt'`,
+//response: { order: { franchiseId: 1, storeId: 1, items: [{ menuId: 1, description: 'Veggie', price: 0.05 }], id: 1 }, 
+//jwt: '1111111111' },
+
 // createOrder
 orderRouter.post(
   '/',
   authRouter.authenticateToken,
   asyncHandler(async (req, res) => {
+    const startTime = Date.now();
     const orderReq = req.body;
+    //metrics helpers needed, how long it took start-end, how many pizzas, price, if it was successfull
     const order = await DB.addDinerOrder(req.user, orderReq);
     const r = await fetch(`${config.factory.url}/api/order`, {
       method: 'POST',
@@ -85,9 +93,19 @@ orderRouter.post(
       body: JSON.stringify({ diner: { id: req.user.id, name: req.user.name, email: req.user.email }, order }),
     });
     const j = await r.json();
+    const endTime = Date.now();
+    metrics.getLatency(startTime,endTime);
     if (r.ok) {
+      const totalPrice = 0;
+      for (let i = 0; i < order.items.length; i++) {
+        metrics.incrementPizzasSold();
+        totalPrice += order[i].price;  // Add the price of the current item to the total
+      }
+      metrics.incrementRevenue(totalPrice);
+
       res.send({ order, jwt: j.jwt, reportUrl: j.reportUrl });
     } else {
+      metrics.incrementFailedPizzas()
       res.status(500).send({ message: 'Failed to fulfill order at factory', reportUrl: j.reportUrl });
     }
   })
