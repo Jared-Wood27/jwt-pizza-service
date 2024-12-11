@@ -14,12 +14,26 @@ class Metrics {
     this.pizzasSold = 0;
     this.failedPizzas = 0;
     this.pizzaRevenue = 0;
-    this.responseTime = 0;
+
+    this.reqLatencies = [];
+    this.pizzaLatencies = [];
+
+    this.requestTracker = this.requestTracker.bind(this);
+    this.incrementUsers = this.incrementUsers.bind(this);
+    this.decrementUsers = this.decrementUsers.bind(this);
+    this.incrementGoodAuthRequests = this.incrementGoodAuthRequests.bind(this);
+    this.incrementBadAuthRequests = this.incrementBadAuthRequests.bind(this);
+    this.incrementPizzasSold = this.incrementPizzasSold.bind(this);
+    this.incrementFailedPizzas = this.incrementFailedPizzas.bind(this);
+    this.incrementRevenue = this.incrementRevenue.bind(this);
+    this.addReqLatency = this.addReqLatency.bind(this);
+    this.addPizzaLatency = this.addPizzaLatency.bind(this);
 
   }
 
 
-  incrementRequests(req, res, next) { //pass in rec 
+  requestTracker(req, res, next) { //pass in rec 
+    const startTime = Date.now();
     const method = req.method;
     this.totalRequests++;
     console.log(method);
@@ -39,51 +53,66 @@ class Metrics {
       default:
         break;
     }
+    const latency = Date.now() - startTime;
+    this.addReqLatency(latency);
     next();
   }
 
   // Increment active user counter (e.g., login or signup)
   incrementUsers() {
+    console.log("add user");
     this.activeUsers++;
   }
 
   // decrement active user counter (e.g., logout)
   decrementUsers() {
+    console.log("remove user");
     this.activeUsers--;
   }
 
   // Increment authentication request counter
   incrementGoodAuthRequests() {
+    console.log("add good auth");
     this.goodAuthRequests++;
   }
 
-  IncrementBadAuthRequests() {
+  incrementBadAuthRequests() {
+    console.log("add bad auth");
     this.badAuthRequests++;
   }
 
   // Increment pizzas sold counter
   incrementPizzasSold() {
+    console.log("add sold pizza");
     this.pizzasSold++;
   }
 
   // Increment failedPizzas counter
   incrementFailedPizzas() {
+    console.log("add failed pizza");
     this.failedPizzas++;
   }
 
   // Increment total revenue
   incrementRevenue(newPrice) {
+    console.log("update revenue");
     this.pizzaRevenue = this.pizzaRevenue + newPrice;
   }
 
   // get latency - pizza or request
-  getLatency(start, end) {
-    this.responseTime = end - start;
+  addReqLatency(time) {
+    console.log("add req time");
+    this.reqLatencies.push(time);
+  }
+
+  addPizzaLatency(time){
+    console.log("add pizza creation time");
+    this.pizzaLatencies.push(time);
   }
 
   // Periodically report all metrics to Grafana
   reportMetricsRepeatedly() {
-    // This will periodically sent metrics to Grafana
+    // This will periodically sent metrics to Grafana npm run run to test locally rather then waiting for the pipeline
     const timer = setInterval(() => {
       try {
         this.sendMetricToGrafana('request', 'all', 'allRequests', this.totalRequests);
@@ -91,6 +120,32 @@ class Metrics {
         this.sendMetricToGrafana('request', 'POST', 'allPosts', this.postRequests);
         this.sendMetricToGrafana('request', 'DELETE', 'allDeletes', this.deleteRequests);
         this.sendMetricToGrafana('request', 'PUT', 'allPuts', this.putRequests);
+
+        // Report user-related metrics (e.g., active users) 
+        //sendMetricToGrafana(metricPrefix, httpMethod, metricName, metricValue)
+        this.sendMetricToGrafana('user', 'actions', 'activeUsers', this.activeUsers);
+
+        // Report auth-related metrics
+        this.sendMetricToGrafana('auth', 'requests', 'goodAuths', this.goodAuthRequests);
+        this.sendMetricToGrafana('auth', 'requests', 'badAuths', this.badAuthRequests);
+        
+        // Report pizza-related metrics
+        this.sendMetricToGrafana('purchase', 'requests', 'pizzasSoldCount', this.pizzasSold);
+        this.sendMetricToGrafana('purchase', 'requests', 'failedPizzasCount', this.failedPizzas);
+        this.sendMetricToGrafana('purchase', 'requests', 'totalRevenue', this.pizzaRevenue);
+
+        //report general latency
+        for (let i = 0; i < this.reqLatencies.length; i++){
+          this.sendMetricToGrafana('latency', 'requests', 'requestTime', this.reqLatencies[i]);
+        }
+        for (let i = 0; i < this.pizzaLatencies.length; i++){
+          this.sendMetricToGrafana('latency', 'requests', 'pizzaCreationTime', this.pizzaLatencies[i]);
+        }
+
+        // Report system-related metrics (CPU and memory usage)
+        this.sendMetricToGrafana('system', 'cpu', 'usage', this.getCpuUsagePercentage());
+        this.sendMetricToGrafana('system', 'memory', 'usage', this.getMemoryUsagePercentage());
+        console.log("\n log divider \n");
       } catch (error) {
         console.log('Error sending metrics', error);
       }

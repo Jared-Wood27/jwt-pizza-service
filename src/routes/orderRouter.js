@@ -45,6 +45,7 @@ orderRouter.endpoints = [
 orderRouter.get(
   '/menu',
   asyncHandler(async (req, res) => {
+    //metrics.metricfunction();
     res.send(await DB.getMenu());
   })
 );
@@ -94,8 +95,9 @@ orderRouter.post(
       body: JSON.stringify({ diner: { id: req.user.id, name: req.user.name, email: req.user.email }, order }),
     });
     const j = await r.json();
-    const endTime = Date.now();
-    metrics.getLatency(startTime,endTime);
+    const latency = Date.now() - startTime;
+    metrics.addPizzaLatency(latency);
+
     if (r.ok) {
       let totalPrice = 0.00;
       for (let i = 0; i < order.items.length; i++) {
@@ -106,7 +108,7 @@ orderRouter.post(
 
       res.send({ order, jwt: j.jwt, reportUrl: j.reportUrl });
     } else {
-      metrics.incrementFailedPizzas()
+      metrics.incrementFailedPizzas();
       res.status(500).send({ message: 'Failed to fulfill order at factory', reportUrl: j.reportUrl });
     }
   })

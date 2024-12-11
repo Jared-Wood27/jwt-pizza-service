@@ -59,8 +59,10 @@ async function setAuthUser(req, res, next) {
 // Authenticate token
 authRouter.authenticateToken = (req, res, next) => {
   if (!req.user) {
+    metrics.incrementBadAuthRequests();
     return res.status(401).send({ message: 'unauthorized' });
   }
+  metrics.incrementGoodAuthRequests();
   next();
 };
 
@@ -74,6 +76,7 @@ authRouter.post(
     }
     const user = await DB.addUser({ name, email, password, roles: [{ role: Role.Diner }] });
     const auth = await setAuth(user);
+    //metrics.incrementGoodAuthRequests();
     metrics.incrementUsers();  // new metrics line
     res.json({ user: user, token: auth });
   })
@@ -86,6 +89,7 @@ authRouter.put(
     const { email, password } = req.body;
     const user = await DB.getUser(email, password);
     const auth = await setAuth(user);
+    //metrics.incrementGoodAuthRequests();
     metrics.incrementUsers();
     res.json({ user: user, token: auth });
   })
@@ -112,6 +116,7 @@ authRouter.put(
     const user = req.user;
     if (user.id !== userId && !user.isRole(Role.Admin)) {
       return res.status(403).json({ message: 'unauthorized' });
+      //metrics.incrementBadAuthRequests();
     }
 
     const updatedUser = await DB.updateUser(userId, email, password);
