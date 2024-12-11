@@ -14,6 +14,8 @@ class Metrics {
     this.pizzasSold = 0;
     this.failedPizzas = 0;
     this.pizzaRevenue = 0;
+    this.averageReqTime = 0;
+    this.averagePizzaTime = 0;
 
     this.reqLatencies = [];
     this.pizzaLatencies = [];
@@ -137,11 +139,13 @@ class Metrics {
 
         //report general latency
         for (let i = 0; i < this.reqLatencies.length; i++){
-          this.sendMetricToGrafana('latency', 'requestLatency', 'requestTime', this.reqLatencies[i]);
+          this.averageReqTime = this.averageReqTime + this.reqLatencies[i];
         }
+        this.sendMetricToGrafana('latency', 'requestLatency', 'requestTime', (this.averageReqTime / this.reqLatencies.length));
         for (let i = 0; i < this.pizzaLatencies.length; i++){
-          this.sendMetricToGrafana('latency', 'pizzaLatency', 'pizzaCreationTime', this.pizzaLatencies[i]);
+          this.averagePizzaTime = this.averagePizzaTime + this.pizzaLatencies[i];
         }
+        this.sendMetricToGrafana('latency', 'pizzaLatency', 'PizzaCreationTime', (this.averagePizzaTime / this.pizzaLatencies.length));
 
         // Report system-related metrics (CPU and memory usage)
         this.sendMetricToGrafana('system', 'cpu', 'cpuUsage', this.getCpuUsagePercentage());
