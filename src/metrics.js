@@ -117,11 +117,11 @@ class Metrics {
     // This will periodically sent metrics to Grafana npm run run to test locally rather then waiting for the pipeline
     const timer = setInterval(() => {
       try {
-        this.sendMetricToGrafana('request', 'ALL', 'ALL Requests', this.totalRequests);
-        this.sendMetricToGrafana('request', 'GET', 'GET Requests', this.getRequests);
-        this.sendMetricToGrafana('request', 'POST', 'POST Requests', this.postRequests);
-        this.sendMetricToGrafana('request', 'DELETE', 'DELETE Requests', this.deleteRequests);
-        this.sendMetricToGrafana('request', 'PUT', 'PUT Requests', this.putRequests);
+        this.sendMetricToGrafana('request', 'ALL', 'ALLRequests', this.totalRequests);
+        this.sendMetricToGrafana('request', 'GET', 'GETRequests', this.getRequests);
+        this.sendMetricToGrafana('request', 'POST', 'POSTRequests', this.postRequests);
+        this.sendMetricToGrafana('request', 'DELETE', 'DELETERequests', this.deleteRequests);
+        this.sendMetricToGrafana('request', 'PUT', 'PUTRequests', this.putRequests);
 
         // Report user-related metrics (e.g., active users) 
         //sendMetricToGrafana(metricPrefix, httpMethod, metricName, metricValue)
@@ -129,8 +129,8 @@ class Metrics {
         //this.sendMetricToGrafana('Active Users', this.activeUsers);
 
         // Report auth-related metrics
-        this.sendMetricToGrafana('auth', 'GOOD AUTH', 'goodAuths', this.goodAuthRequests);
-        this.sendMetricToGrafana('auth', 'BAD AUTH', 'badAuths', this.badAuthRequests);
+        this.sendMetricToGrafana('auth', 'GOODAUTH', 'goodAuths', this.goodAuthRequests);
+        this.sendMetricToGrafana('auth', 'BADAUTH', 'badAuths', this.badAuthRequests);
         
         // Report pizza-related metrics
         this.sendMetricToGrafana('purchase', 'requests', 'pizzasSoldCount', this.pizzasSold);
