@@ -89,7 +89,7 @@ class Metrics {
         this.sendMetricToGrafana('request', 'DELETE', 'allDeletes', this.deleteRequests);
         this.sendMetricToGrafana('request', 'PUT', 'allPuts', this.putRequests);
       } catch (error) {
-        console/log('Error sending metrics', error);
+        console.log('Error sending metrics', error);
       }
     }, 10000); //report every 10 seconds
     timer.unref();
