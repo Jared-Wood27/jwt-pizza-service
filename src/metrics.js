@@ -154,7 +154,7 @@ class Metrics {
     timer.unref();
   }
 
-  sendMetricToGrafana(metricName, metricValue) {
+  sendMetricToGrafana(metricPrefix, httpMethod, metricName, metricValue) {
     //const metric = `${metricName}=${metricValue}`;
     const metric = `${metricPrefix},source=${config.metrics.source},method=${httpMethod} ${metricName}=${metricValue}`;
 
