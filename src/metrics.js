@@ -19,8 +19,10 @@ class Metrics {
   }
 
 
-  incrementRequests(method) {
+  incrementRequests(req, res, next) { //pass in rec 
+    const method = req.method;
     this.totalRequests++;
+    console.log(method);
     switch (method) {
       case 'GET':
         this.getRequests++;
@@ -37,6 +39,7 @@ class Metrics {
       default:
         break;
     }
+    next();
   }
 
   // Increment active user counter (e.g., login or signup)

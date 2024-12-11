@@ -23,7 +23,7 @@ app.use('/api', apiRouter);
 apiRouter.use('/auth', authRouter);
 apiRouter.use('/order', orderRouter);
 apiRouter.use('/franchise', franchiseRouter);
-app.use(metrics.requestTracker);
+app.use(metrics.requestTracker); //issue line here
 
 metrics.reportMetricsRepeatedly();
 //app.use(metrics.requestTracker.bind(metrics)); try this if test issues
