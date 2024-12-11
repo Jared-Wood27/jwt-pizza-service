@@ -107,14 +107,14 @@
               "type": "prometheus",
               "uid": "grafanacloud-prom"
             },
-            "disableTextWrap": false,
+            "disableTextWrap": true,
             "editorMode": "builder",
-            "expr": "rate(request_allRequests{source=\"jwt-pizza-service-dev\"}[1m])",
+            "expr": "rate(request_ALLRequests{source=\"jwt-pizza-service\"}[1m])",
             "fullMetaSearch": false,
             "hide": false,
             "includeNullMetadata": true,
             "instant": false,
-            "legendFormat": "All",
+            "legendFormat": "TOTAL",
             "range": true,
             "refId": "A",
             "useBackend": false
@@ -124,9 +124,9 @@
               "type": "prometheus",
               "uid": "grafanacloud-prom"
             },
-            "disableTextWrap": false,
+            "disableTextWrap": true,
             "editorMode": "builder",
-            "expr": "rate(request_allGets{source=\"jwt-pizza-service-dev\"}[1m])",
+            "expr": "rate(request_GETRequests{source=\"jwt-pizza-service\"}[1m])",
             "fullMetaSearch": false,
             "hide": false,
             "includeNullMetadata": true,
@@ -141,9 +141,9 @@
               "type": "prometheus",
               "uid": "grafanacloud-prom"
             },
-            "disableTextWrap": false,
+            "disableTextWrap": true,
             "editorMode": "builder",
-            "expr": "rate(request_allPosts{source=\"jwt-pizza-service-dev\"}[1m])",
+            "expr": "rate(request_POSTRequests{source=\"jwt-pizza-service\"}[1m])",
             "fullMetaSearch": false,
             "hide": false,
             "includeNullMetadata": true,
@@ -158,9 +158,9 @@
               "type": "prometheus",
               "uid": "grafanacloud-prom"
             },
-            "disableTextWrap": false,
+            "disableTextWrap": true,
             "editorMode": "builder",
-            "expr": "rate(request_allDeletes{source=\"jwt-pizza-service-dev\"}[1m])",
+            "expr": "rate(request_DELETERequests{source=\"jwt-pizza-service\"}[1m])",
             "fullMetaSearch": false,
             "hide": false,
             "includeNullMetadata": true,
@@ -175,9 +175,9 @@
               "type": "prometheus",
               "uid": "grafanacloud-prom"
             },
-            "disableTextWrap": false,
+            "disableTextWrap": true,
             "editorMode": "builder",
-            "expr": "rate(request_allPuts{source=\"jwt-pizza-service-dev\"}[1m])",
+            "expr": "rate(request_PUTRequests{source=\"jwt-pizza-service\"}[1m])",
             "fullMetaSearch": false,
             "hide": false,
             "includeNullMetadata": true,
@@ -208,9 +208,9 @@
               "axisLabel": "",
               "axisPlacement": "auto",
               "barAlignment": 0,
-              "barWidthFactor": 0.6,
-              "drawStyle": "line",
-              "fillOpacity": 0,
+              "barWidthFactor": 0.9,
+              "drawStyle": "bars",
+              "fillOpacity": 100,
               "gradientMode": "none",
               "hideFrom": {
                 "legend": false,
@@ -219,7 +219,7 @@
               },
               "insertNulls": false,
               "lineInterpolation": "linear",
-              "lineWidth": 1,
+              "lineWidth": 3,
               "pointSize": 5,
               "scaleDistribution": {
                 "type": "linear"
@@ -288,7 +288,7 @@
             },
             "disableTextWrap": false,
             "editorMode": "builder",
-            "expr": "user_activeUsers{source=\"jwt-pizza-service-dev\"}",
+            "expr": "user_ActiveUsers{source=\"jwt-pizza-service\"}",
             "fullMetaSearch": false,
             "hide": false,
             "includeNullMetadata": true,
@@ -360,7 +360,23 @@
               ]
             }
           },
-          "overrides": []
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Failure"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "dark-red",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            }
+          ]
         },
         "gridPos": {
           "h": 8,
@@ -390,8 +406,9 @@
             },
             "disableTextWrap": false,
             "editorMode": "builder",
-            "expr": "rate(auth_goodAuths{source=\"jwt-pizza-service-dev\"}[1m])",
+            "expr": "rate(auth_goodAuths{source=\"jwt-pizza-service\"}[1m])",
             "fullMetaSearch": false,
+            "hide": false,
             "includeNullMetadata": true,
             "instant": false,
             "legendFormat": "Success",
@@ -406,7 +423,7 @@
             },
             "disableTextWrap": false,
             "editorMode": "builder",
-            "expr": "rate(auth_badAuths{source=\"jwt-pizza-service-dev\"}[1m])",
+            "expr": "rate(auth_badAuths{source=\"jwt-pizza-service\"}[1m])",
             "fullMetaSearch": false,
             "hide": false,
             "includeNullMetadata": true,
@@ -440,7 +457,7 @@
               "barAlignment": 0,
               "barWidthFactor": 0.6,
               "drawStyle": "line",
-              "fillOpacity": 0,
+              "fillOpacity": 30,
               "gradientMode": "none",
               "hideFrom": {
                 "legend": false,
@@ -525,7 +542,7 @@
             },
             "disableTextWrap": false,
             "editorMode": "builder",
-            "expr": "rate(purchase_pizzasSoldCount{source=\"jwt-pizza-service-dev\"}[1m])",
+            "expr": "rate(purchase_pizzasSoldCount{source=\"jwt-pizza-service\"}[1m])",
             "fullMetaSearch": false,
             "hide": false,
             "includeNullMetadata": true,
@@ -542,7 +559,7 @@
             },
             "disableTextWrap": false,
             "editorMode": "builder",
-            "expr": "purchase_failedPizzasCount{source=\"jwt-pizza-service-dev\"}",
+            "expr": "purchase_failedPizzasCount{source=\"jwt-pizza-service\"}",
             "fullMetaSearch": false,
             "hide": false,
             "includeNullMetadata": true,
@@ -573,11 +590,24 @@
               "mode": "percentage",
               "steps": [
                 {
-                  "color": "semi-dark-orange",
+                  "color": "green",
                   "value": null
+                },
+                {
+                  "color": "yellow",
+                  "value": 60
+                },
+                {
+                  "color": "orange",
+                  "value": 80
+                },
+                {
+                  "color": "dark-red",
+                  "value": 90
                 }
               ]
-            }
+            },
+            "unit": "percent"
           },
           "overrides": []
         },
@@ -612,7 +642,7 @@
             },
             "disableTextWrap": false,
             "editorMode": "builder",
-            "expr": "avg(system_memUsage{source=\"jwt-pizza-service-dev\"})",
+            "expr": "system_memUsage{source=\"jwt-pizza-service\"}",
             "fullMetaSearch": false,
             "includeNullMetadata": true,
             "instant": false,
@@ -654,7 +684,8 @@
                   "value": 80
                 }
               ]
-            }
+            },
+            "unit": "percent"
           },
           "overrides": []
         },
@@ -689,7 +720,7 @@
             },
             "disableTextWrap": false,
             "editorMode": "builder",
-            "expr": "avg(system_cpuUsage{source=\"jwt-pizza-service-dev\"})",
+            "expr": "system_cpuUsage{source=\"jwt-pizza-service\"}",
             "fullMetaSearch": false,
             "hide": false,
             "includeNullMetadata": true,
@@ -795,7 +826,7 @@
             },
             "disableTextWrap": false,
             "editorMode": "builder",
-            "expr": "latency_requestTime{source=\"jwt-pizza-service-dev\"}",
+            "expr": "latency_requestTime{source=\"jwt-pizza-service\"}",
             "fullMetaSearch": false,
             "includeNullMetadata": true,
             "instant": false,
@@ -856,7 +887,7 @@
             "fields": "",
             "values": false
           },
-          "showPercentChange": false,
+          "showPercentChange": true,
           "textMode": "auto",
           "wideLayout": true
         },
@@ -869,7 +900,7 @@
             },
             "disableTextWrap": false,
             "editorMode": "builder",
-            "expr": "rate(purchase_totalRevenue{source=\"jwt-pizza-service-dev\"}[1m])",
+            "expr": "sum(rate(purchase_totalRevenue{source=\"jwt-pizza-service\"}[1m]))",
             "fullMetaSearch": false,
             "hide": false,
             "includeNullMetadata": true,
@@ -929,7 +960,7 @@
                 "mode": "off"
               }
             },
-            "displayName": "Request Latency",
+            "displayName": "Pizza Latency",
             "mappings": [],
             "min": -1,
             "thresholds": {
@@ -976,7 +1007,7 @@
             },
             "disableTextWrap": false,
             "editorMode": "builder",
-            "expr": "latency_pizzaCreationTime{source=\"jwt-pizza-service-dev\"}",
+            "expr": "latency_PizzaCreationTime{source=\"jwt-pizza-service\"}",
             "fullMetaSearch": false,
             "includeNullMetadata": true,
             "instant": false,
@@ -991,20 +1022,20 @@
       }
     ],
     "preload": false,
-    "refresh": "30s",
+    "refresh": "10s",
     "schemaVersion": 40,
     "tags": [],
     "templating": {
       "list": []
     },
     "time": {
-      "from": "2024-12-11T03:00:45.783Z",
-      "to": "2024-12-11T09:00:45.785Z"
+      "from": "now-15m",
+      "to": "now"
     },
     "timepicker": {},
     "timezone": "browser",
     "title": "Pizza Dashboard",
     "uid": "fe5uhmqjpgav4a",
-    "version": 32,
+    "version": 47,
     "weekStart": ""
   }
