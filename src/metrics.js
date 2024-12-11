@@ -125,7 +125,7 @@ class Metrics {
 
         // Report user-related metrics (e.g., active users) 
         //sendMetricToGrafana(metricPrefix, httpMethod, metricName, metricValue)
-        this.sendMetricToGrafana('user', 'USER', 'Active Users', this.activeUsers);
+        this.sendMetricToGrafana('user', 'USER', 'ActiveUsers', this.activeUsers);
         //this.sendMetricToGrafana('Active Users', this.activeUsers);
 
         // Report auth-related metrics
