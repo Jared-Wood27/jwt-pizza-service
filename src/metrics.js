@@ -115,19 +115,20 @@ class Metrics {
     // This will periodically sent metrics to Grafana npm run run to test locally rather then waiting for the pipeline
     const timer = setInterval(() => {
       try {
-        this.sendMetricToGrafana('request', 'all', 'allRequests', this.totalRequests);
-        this.sendMetricToGrafana('request', 'GET', 'allGets', this.getRequests);
-        this.sendMetricToGrafana('request', 'POST', 'allPosts', this.postRequests);
-        this.sendMetricToGrafana('request', 'DELETE', 'allDeletes', this.deleteRequests);
-        this.sendMetricToGrafana('request', 'PUT', 'allPuts', this.putRequests);
+        this.sendMetricToGrafana('request', 'ALL', 'ALL Requests', this.totalRequests);
+        this.sendMetricToGrafana('request', 'GET', 'GET Requests', this.getRequests);
+        this.sendMetricToGrafana('request', 'POST', 'POST Requests', this.postRequests);
+        this.sendMetricToGrafana('request', 'DELETE', 'DELETE Requests', this.deleteRequests);
+        this.sendMetricToGrafana('request', 'PUT', 'PUT Requests', this.putRequests);
 
         // Report user-related metrics (e.g., active users) 
         //sendMetricToGrafana(metricPrefix, httpMethod, metricName, metricValue)
-        this.sendMetricToGrafana('user', 'actions', 'activeUsers', this.activeUsers);
+        this.sendMetricToGrafana('user', 'USER', 'Active Users', this.activeUsers);
+        //this.sendMetricToGrafana('Active Users', this.activeUsers);
 
         // Report auth-related metrics
-        this.sendMetricToGrafana('auth', 'requests', 'goodAuths', this.goodAuthRequests);
-        this.sendMetricToGrafana('auth', 'requests', 'badAuths', this.badAuthRequests);
+        this.sendMetricToGrafana('auth', 'GOOD AUTH', 'goodAuths', this.goodAuthRequests);
+        this.sendMetricToGrafana('auth', 'BAD AUTH', 'badAuths', this.badAuthRequests);
         
         // Report pizza-related metrics
         this.sendMetricToGrafana('purchase', 'requests', 'pizzasSoldCount', this.pizzasSold);
@@ -136,15 +137,15 @@ class Metrics {
 
         //report general latency
         for (let i = 0; i < this.reqLatencies.length; i++){
-          this.sendMetricToGrafana('latency', 'requests', 'requestTime', this.reqLatencies[i]);
+          this.sendMetricToGrafana('latency', 'requestLatency', 'requestTime', this.reqLatencies[i]);
         }
         for (let i = 0; i < this.pizzaLatencies.length; i++){
-          this.sendMetricToGrafana('latency', 'requests', 'pizzaCreationTime', this.pizzaLatencies[i]);
+          this.sendMetricToGrafana('latency', 'pizzaLatency', 'pizzaCreationTime', this.pizzaLatencies[i]);
         }
 
         // Report system-related metrics (CPU and memory usage)
-        this.sendMetricToGrafana('system', 'cpu', 'usage', this.getCpuUsagePercentage());
-        this.sendMetricToGrafana('system', 'memory', 'usage', this.getMemoryUsagePercentage());
+        this.sendMetricToGrafana('system', 'cpu', 'cpuUsage', this.getCpuUsagePercentage());
+        this.sendMetricToGrafana('system', 'memory', 'memUsage', this.getMemoryUsagePercentage());
         console.log("\n log divider \n");
       } catch (error) {
         console.log('Error sending metrics', error);
@@ -152,35 +153,9 @@ class Metrics {
     }, 10000); //report every 10 seconds
     timer.unref();
   }
-    // Report HTTP request-related metrics
-    //this.sendMetricToGrafana('request', 'all', 'allRequests', this.totalRequests);
-    //this.sendMetricToGrafana('request', 'GET', 'allGets', this.getRequests);
-    //this.sendMetricToGrafana('request', 'POST', 'allPosts', this.postRequests);
-    //this.sendMetricToGrafana('request', 'DELETE', 'allDeletes', this.deleteRequests);
-    //this.sendMetricToGrafana('request', 'PUT', 'allPuts', this.putRequests);
 
-    // Report user-related metrics (e.g., active users) 
-    //sendMetricToGrafana(metricPrefix, httpMethod, metricName, metricValue)
-    //this.sendMetricToGrafana('user', 'actions', 'activeUsers', this.activeUsers);
-
-    // Report auth-related metrics
-    //this.sendMetricToGrafana('auth', 'requests', 'goodAuths', this.goodAuthRequests);
-    //this.sendMetricToGrafana('auth', 'requests', 'badAuths', this.badAuthRequests);
-    
-    // Report pizza-related metrics
-    //this.sendMetricToGrafana('purchase', 'requests', 'pizzasSoldCount', this.pizzasSold);
-    //this.sendMetricToGrafana('purchase', 'requests', 'failedPizzasCount', this.failedPizzas);
-    //this.sendMetricToGrafana('purchase', 'requests', 'totalRevenue', this.pizzaRevenue);
-
-    //report general latency
-    //this.sendMetricToGrafana('latency', 'requests', 'responseTime', this.responseTime);
-
-    // Report system-related metrics (CPU and memory usage)
-    //this.sendMetricToGrafana('system', 'cpu', 'usage', this.getCpuUsagePercentage());
-    //this.sendMetricToGrafana('system', 'memory', 'usage', this.getMemoryUsagePercentage());
-  //}
-
-  sendMetricToGrafana(metricPrefix, httpMethod, metricName, metricValue) {
+  sendMetricToGrafana(metricName, metricValue) {
+    //const metric = `${metricName}=${metricValue}`;
     const metric = `${metricPrefix},source=${config.metrics.source},method=${httpMethod} ${metricName}=${metricValue}`;
 
     fetch(`${config.metrics.url}`, {
@@ -190,6 +165,7 @@ class Metrics {
     })
       .then((response) => {
         if (!response.ok) {
+          console.log(httpMethod, metricName);
           console.error('Failed to push metrics data to Grafana');
         } else {
           console.log(`Pushed ${metric}`);
